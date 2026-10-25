@@ -40,7 +40,7 @@ language: Thai
 | ใช้ตัวเลขจาก scenario หรือไม่ (latency, ช่วงพีก, ข้อจำกัดของ MailFast)             | ไม่ ไม่มีตัวเลข latency, peak load, หรือ rate limit                | ได้ใช้ เช่น p95 ≤ 500 ms, peak 200 orders/s, MailFast 50/s, p95 1.5s/p99 8s, failure 0.5%                           |
 | ทางเลือกที่พิจารณา (ระบุ)                                                          | Sync orchestration, Generic Message Broker, DB polling             | Sync with goroutines, Self-hosted RabbitMQ on Kubernetes, Kafka / Cloud Pub/Sub                                     |
 | จัดการแต้มสะสมแบบ "ครั้งเดียวเท่านั้น" และ rate limit ของ MailFast หรือไม่ อย่างไร | กล่าวถึงแบบกว้าง ๆ เรื่อง idempotency แต่ไม่มีแนวทาง rate limiting | ระบุชัดเจน: ใช้คิว buffer คุม worker ไม่เกิน 50/s สำหรับ MailFast และใช้ order_id ทำ idempotency key สำหรับแต้มสะสม |
-| มีสิ่งที่แต่งขึ้นเองหรือไม่ (ตัวเลข เครื่องมือ หรือข้อเท็จจริงที่ไม่มีใน scenario) | ไม่มี                                                              | ไม่มี                                                                                                               |
+| มีสิ่งที่แต่งขึ้นเองหรือไม่ (ตัวเลข เครื่องมือ หรือข้อเท็จจริงที่ไม่มีใน scenario) | ไม่มี                                                              | มี: AI ประมาณเวลา publish ~2-5 ms และ p95 รวม ~305 ms (บวกจาก ~300 ms ใน scenario) และเลือก Locust ซึ่งเป็นเครื่องมือจำลองโหลด เพื่อให้ ADR มีตัวเลขและวิธีทดสอบที่ตรวจสอบได้ แต่ทั้งหมดนี้ไม่มีใน scenario |
 
 ## รับผิดชอบ ADR ฉบับสุดท้ายของตัวเอง
 
@@ -56,3 +56,4 @@ language: Thai
 | 1   | เพิ่ม Dead-Letter Queue (DLX / DLQ) สำหรับข้อความที่ retry แล้วยังล้มเหลว | AI เสนอเพียงการ retry แต่ไม่ได้บอกว่าจะจัดการกับ poison message อย่างไร หากไม่ทำ DLQ คิวจะติดขัดเมื่อ MailFast ล้มเหลวต่อเนื่อง |
 | 2   | ระบุใช้ RabbitMQ Quorum Queues (Raft) บน Kubernetes แทนคิวแบบทั่วไป       | เพื่อป้องกันข้อความสูญหายหาก Pod/Node ของ RabbitMQ ล่มระหว่างช่วงพีก 200 orders/s โดยเป็นแนวทางมาตรฐานบน K8s                    |
 | 3   | เพิ่มกลไก Auto-scaling ของ `loyaltyservice` ตามความยาวคิว                 | เพื่อรับประกัน SLA ที่ต้องแจกแต้มสะสมให้เสร็จสิ้นภายใน 1 นาที แม้ในช่วงพีกที่มีคำสั่งซื้อทะลักเข้ามาถึง 200 รายการต่อวินาที     |
+| 4   | ไม่ได้แก้ ADR แต่ถือว่า ~2-5 ms, ~305 ms และ Locust ที่ AI ประมาณและเลือกเองเป็นสมมติฐาน ซึ่งต้องยืนยันด้วย Load Testing ในหัวข้อ Validation | ตัวเลขและเครื่องมือเหล่านี้ไม่มีใน `docs/scenario.md` จึงไม่ถือเป็นข้อเท็จจริง และไม่ได้แก้เพื่อให้ ADR ตรงกับฉบับที่ AI รีวิวและคณะกรรมการพิจารณา |

@@ -36,7 +36,7 @@ Groups of 5 add a **security & privacy officer** (role card X). In groups of 3, 
 
 ## 3. Record the decision (8 min, together)
 
-**ADR reviewed:** `docs/adr/0002-use-rabbitmq-for-post-order-processing.md` by Naphat Serirak (6632061321) (GitHub Link)
+**ADR reviewed:** `docs/adr/0002-use-rabbitmq-for-post-order-processing.md` by Naphat Serirak (6632061321) ([GitHub Link](https://github.com/neennera/naphat-salab-aiagent/blob/main/docs/adr/0002-use-rabbitmq-for-post-order-processing.md))
 **Board members and roles:**
 
 - Architect: Naphat Serirak (6632061321)
